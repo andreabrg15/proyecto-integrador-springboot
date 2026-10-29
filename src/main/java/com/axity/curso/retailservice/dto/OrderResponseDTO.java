@@ -8,7 +8,6 @@ import java.util.List;
 
 public record OrderResponseDTO(
         Long id,
-        Long customerId,
         LocalDateTime orderDate,
         OrderStatus status,
         BigDecimal total,

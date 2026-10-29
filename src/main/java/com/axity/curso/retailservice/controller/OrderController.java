@@ -39,7 +39,6 @@ public class OrderController {
 
         return new OrderResponseDTO(
                 order.getId(),
-                order.getCustomer().getId(),
                 order.getOrderDate(),
                 order.getStatus(),
                 order.getTotal(),

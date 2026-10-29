@@ -2,12 +2,10 @@ package com.axity.curso.retailservice.service;
 
 import com.axity.curso.retailservice.dto.OrderItemRequestDTO;
 import com.axity.curso.retailservice.dto.OrderRequestDTO;
-import com.axity.curso.retailservice.model.Customer;
 import com.axity.curso.retailservice.model.Order;
 import com.axity.curso.retailservice.model.OrderItem;
 import com.axity.curso.retailservice.enumeration.OrderStatus;
 import com.axity.curso.retailservice.model.Product;
-import com.axity.curso.retailservice.repository.CustomerRepository;
 import com.axity.curso.retailservice.repository.OrderRepository;
 import com.axity.curso.retailservice.repository.ProductRepository;
 
@@ -23,16 +21,13 @@ import java.util.List;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final CustomerRepository customerRepository;
     private final ProductRepository productRepository;
 
     public OrderService(
             OrderRepository orderRepository,
-            CustomerRepository customerRepository,
             ProductRepository productRepository) {
 
         this.orderRepository = orderRepository;
-        this.customerRepository = customerRepository;
         this.productRepository = productRepository;
     }
 
@@ -40,9 +35,9 @@ public class OrderService {
     public Order createOrder(OrderRequestDTO request) {
 
         // 1. Validar la solicitud
-        if (request == null || request.customerId() == null) {
+        if (request == null) {
             throw new IllegalArgumentException(
-                    "El ID del cliente es obligatorio");
+                    "Formato invalido en request");
         }
 
         if (request.items() == null || request.items().isEmpty()) {
@@ -50,22 +45,15 @@ public class OrderService {
                     "El pedido debe contener al menos un producto");
         }
 
-        // 2. Buscar al cliente
-        Customer customer = customerRepository
-                .findById(request.customerId())
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "No existe el cliente solicitado"));
-
-        // 3. Preparar el pedido
+        // 2. Preparar el pedido
         Order order = new Order();
-        order.setCustomer(customer);
         order.setOrderDate(LocalDateTime.now());
         order.setStatus(OrderStatus.PENDING);
 
         List<OrderItem> orderItems = new ArrayList<>();
         BigDecimal total = BigDecimal.ZERO;
 
-        // 4. Procesar cada producto solicitado
+        // 3. Procesar cada producto solicitado
         for (OrderItemRequestDTO itemRequest : request.items()) {
 
             if (itemRequest == null
@@ -99,13 +87,13 @@ public class OrderService {
                                 + product.getName());
             }
 
-            // 5. Calcular el importe de la línea
+            // 4. Calcular el importe de la línea
             BigDecimal unitPrice = product.getPrice();
 
             BigDecimal subtotal = unitPrice.multiply(
                     BigDecimal.valueOf(quantity));
 
-            // 6. Crear el detalle del pedido
+            // 5. Crear el detalle del pedido
             OrderItem orderItem = new OrderItem();
             orderItem.setOrder(order);
             orderItem.setProduct(product);
@@ -115,15 +103,15 @@ public class OrderService {
             orderItems.add(orderItem);
             total = total.add(subtotal);
 
-            // 7. Descontar el inventario
+            // 6. Descontar el inventario
             product.setStock(product.getStock() - quantity);
         }
 
-        // 8. Asociar los detalles y el total
+        // 7. Asociar los detalles y el total
         order.setItems(orderItems);
         order.setTotal(total);
 
-        // 9. Guardar el pedido y sus detalles
+        // 8. Guardar el pedido y sus detalles
         return orderRepository.save(order);
     }
 }

@@ -57,6 +57,17 @@ public class ProductController {
         return toProductResponseDTO(productService.getProductById(id));
     }
 
+    // Todos los productos por categoria
+    @GetMapping("/category/{category}")
+    public List<ProductResponseDTO> getProductsByCategory(
+            @PathVariable String category) {
+
+        return productService.getProductsByCategory(category)
+                .stream()
+                .map(this::toProductResponseDTO)
+                .toList();
+    }
+
     // Agregar Producto
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)

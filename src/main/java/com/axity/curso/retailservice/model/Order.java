@@ -13,8 +13,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Table;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 
 @Entity
@@ -31,10 +29,6 @@ public class Order {
     @Column(nullable = false)
     private OrderStatus status;
 
-    @ManyToOne
-    @JoinColumn(name = "customer_id", nullable = false)
-    private Customer customer;
-
     @OneToMany(mappedBy = "order")
     private List<OrderItem> items = new ArrayList<>();
 
@@ -44,10 +38,9 @@ public class Order {
     public Order() {
     }
 
-    public Order(LocalDateTime orderDate, OrderStatus status, Customer customer) {
+    public Order(LocalDateTime orderDate, OrderStatus status) {
         this.orderDate = orderDate;
         this.status = status;
-        this.customer = customer;
     }
 
     public Long getId() {
@@ -72,14 +65,6 @@ public class Order {
     
     public void setStatus(OrderStatus status) {
         this.status = status;
-    }
-
-    public Customer getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
     }
 
     public List<OrderItem> getItems() {
