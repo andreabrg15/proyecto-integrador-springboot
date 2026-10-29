@@ -34,18 +34,18 @@ public class ProductService {
     @Transactional(readOnly = true)
     public Product getProductById(Long id) {
 
-        return productRepository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException(
-                                "Producto no encontrado con ID: " + id
-                        )
-                );
+        return productRepository.findByIdAndIsActiveTrue(id)
+            .orElseThrow(() ->
+                    new RuntimeException(
+                            "Producto no encontrado o inactivo con ID: " + id
+                    )
+            );
     }
 
     // Transaccion para consulta
     @Transactional(readOnly = true)
     public List<Product> getAllProducts() {
-        return productRepository.findAll();
+        return productRepository.findByIsActiveTrue();
     }
 
     @Transactional

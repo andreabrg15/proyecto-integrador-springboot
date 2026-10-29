@@ -4,6 +4,7 @@ import com.axity.curso.retailservice.model.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ProductRepository
         extends JpaRepository<Product, Long> {
@@ -18,5 +19,8 @@ public interface ProductRepository
     );
 
     // Encontrar productos activos
-    List<Product> findByIsActive(Boolean isActive);
+    List<Product> findByIsActiveTrue();
+
+    // Encontrar productos activos por id
+    Optional<Product> findByIdAndIsActiveTrue(Long id);
 }
