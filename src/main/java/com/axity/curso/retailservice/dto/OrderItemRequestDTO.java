@@ -1,6 +1,6 @@
 package com.axity.curso.retailservice.dto;
 
-public record OrderItemDTO(
+public record OrderItemRequestDTO(
     Long productId,
     Integer quantity
 ) {}

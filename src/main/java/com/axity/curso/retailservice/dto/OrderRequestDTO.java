@@ -2,7 +2,7 @@ package com.axity.curso.retailservice.dto;
 
 import java.util.List;
 
-public record OrderDTO(
+public record OrderRequestDTO(
     Long customerId,
-    List<OrderItemDTO> items
+    List<OrderItemRequestDTO> items
 ) {}

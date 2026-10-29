@@ -1,13 +1,17 @@
 package com.axity.curso.retailservice.controller;
 
-import com.axity.curso.retailservice.dto.OrderDTO;
+import com.axity.curso.retailservice.dto.OrderRequestDTO;
 import com.axity.curso.retailservice.dto.OrderResponseDTO;
 import com.axity.curso.retailservice.model.Order;
 import com.axity.curso.retailservice.model.OrderItem;
 import com.axity.curso.retailservice.service.OrderService;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.List;
 
@@ -24,7 +28,7 @@ public class OrderController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public OrderResponseDTO createOrder(
-            @RequestBody OrderDTO request) {
+            @RequestBody OrderRequestDTO request) {
 
         Order order = orderService.createOrder(request);
 

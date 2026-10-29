@@ -1,7 +1,7 @@
 package com.axity.curso.retailservice.service;
 
-import com.axity.curso.retailservice.dto.OrderItemDTO;
-import com.axity.curso.retailservice.dto.OrderDTO;
+import com.axity.curso.retailservice.dto.OrderItemRequestDTO;
+import com.axity.curso.retailservice.dto.OrderRequestDTO;
 import com.axity.curso.retailservice.model.Customer;
 import com.axity.curso.retailservice.model.Order;
 import com.axity.curso.retailservice.model.OrderItem;
@@ -37,7 +37,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Order createOrder(OrderDTO request) {
+    public Order createOrder(OrderRequestDTO request) {
 
         // 1. Validar la solicitud
         if (request == null || request.customerId() == null) {
@@ -66,7 +66,7 @@ public class OrderService {
         BigDecimal total = BigDecimal.ZERO;
 
         // 4. Procesar cada producto solicitado
-        for (OrderItemDTO itemRequest : request.items()) {
+        for (OrderItemRequestDTO itemRequest : request.items()) {
 
             if (itemRequest == null
                     || itemRequest.productId() == null) {
