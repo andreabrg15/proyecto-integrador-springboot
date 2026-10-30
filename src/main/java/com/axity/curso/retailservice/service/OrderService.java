@@ -31,10 +31,11 @@ public class OrderService {
         this.productRepository = productRepository;
     }
 
+    // Despues de cada transaccion que afecte los registros, se guarda con save
     @Transactional
     public Order createOrder(OrderRequestDTO request) {
 
-        // 1. Validar la solicitud
+        // Validar la solicitud
         if (request == null) {
             throw new IllegalArgumentException(
                     "Formato invalido en request");
@@ -45,7 +46,6 @@ public class OrderService {
                     "El pedido debe contener al menos un producto");
         }
 
-        // 2. Preparar el pedido
         Order order = new Order();
         order.setOrderDate(LocalDateTime.now());
         order.setStatus(OrderStatus.PENDING);
@@ -53,7 +53,7 @@ public class OrderService {
         List<OrderItem> orderItems = new ArrayList<>();
         BigDecimal total = BigDecimal.ZERO;
 
-        // 3. Procesar cada producto solicitado
+        // Procesar cada producto solicitado
         for (OrderItemRequestDTO itemRequest : request.items()) {
 
             if (itemRequest == null
@@ -87,13 +87,12 @@ public class OrderService {
                                 + product.getName());
             }
 
-            // 4. Calcular el importe de la línea
             BigDecimal unitPrice = product.getPrice();
 
             BigDecimal subtotal = unitPrice.multiply(
                     BigDecimal.valueOf(quantity));
 
-            // 5. Crear el detalle del pedido
+            // Crear el detalle del pedido
             OrderItem orderItem = new OrderItem();
             orderItem.setOrder(order);
             orderItem.setProduct(product);
@@ -103,15 +102,29 @@ public class OrderService {
             orderItems.add(orderItem);
             total = total.add(subtotal);
 
-            // 6. Descontar el inventario
+            // Descontar el inventario
             product.setStock(product.getStock() - quantity);
         }
 
-        // 7. Asociar los detalles y el total
         order.setItems(orderItems);
         order.setTotal(total);
 
-        // 8. Guardar el pedido y sus detalles
         return orderRepository.save(order);
+    }
+
+    // Transaccion para consulta
+    @Transactional(readOnly = true)
+    public Order getOrderById(Long id) {
+        return orderRepository.findById(id)
+        .orElseThrow(() ->
+                new RuntimeException(
+                        "Pedido no encontrado con ID:" + id
+                )
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public List<Order> getAllOrders() {
+        return orderRepository.findAll();
     }
 }

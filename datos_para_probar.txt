@@ -1,0 +1,35 @@
+
+Para comenzar probar los endpoints en Swagger se inicializo la
+tabla de Products con datos usando el sig. comando en la consola de h2:
+
+INSERT INTO products (name, description, category, price, stock, is_active) VALUES
+('Cargador', 'Cargador generico', 'Electronicos', 100.00, 10, TRUE),
+('Audifonos', 'Audifonos alambricos', 'Electronicos', 150.00, 20, TRUE),
+('Mouse', 'Mouse optico USB', 'Electronicos', 200.00, 15, TRUE),
+('Teclado', 'Teclado mecanico', 'Electronicos', 450.00, 8, TRUE),
+('Monitor', 'Monitor LED de 24 pulgadas', 'Electronicos', 2500.00, 5, TRUE),
+('Laptop', 'Laptop para uso general', 'Computadoras', 12500.00, 4, TRUE),
+('Memoria USB', 'Memoria USB de 64 GB', 'Electronicos', 120.00, 30, TRUE),
+('Disco duro', 'Disco duro externo de 1 TB', 'Electronicos', 1200.00, 7, TRUE),
+('Webcam', 'Camara web HD', 'Electronicos', 350.00, 12, TRUE),
+('Bocina', 'Bocina Bluetooth portatil', 'Electronicos', 600.00, 10, TRUE),
+('Libreta', 'Libreta profesional de 100 hojas', 'Papeleria', 45.00, 50, TRUE),
+('Pluma', 'Pluma de tinta azul', 'Papeleria', 12.00, 100, TRUE),
+('Lapiz', 'Lapiz de grafito HB', 'Papeleria', 8.00, 100, TRUE),
+('Marcadores', 'Juego de 12 marcadores', 'Papeleria', 95.00, 25, TRUE),
+('Mochila', 'Mochila escolar resistente', 'Accesorios', 550.00, 10, TRUE),
+('Botella', 'Botella reutilizable de 750 ml', 'Accesorios', 180.00, 20, TRUE),
+('Termo', 'Termo de acero inoxidable', 'Accesorios', 320.00, 15, TRUE),
+('Lampara', 'Lampara LED de escritorio', 'Hogar', 280.00, 12, TRUE),
+('Silla', 'Silla ergonomica de oficina', 'Hogar', 1800.00, 6, TRUE),
+('Escritorio', 'Escritorio compacto de madera', 'Hogar', 2200.00, 3, TRUE),
+('Camiseta', 'Camiseta de algodon talla mediana', 'Ropa', 199.00, 25, TRUE),
+('Sudadera', 'Sudadera casual con capucha', 'Ropa', 450.00, 12, TRUE),
+('Gorra', 'Gorra ajustable unisex', 'Ropa', 160.00, 18, TRUE),
+('Tenis', 'Tenis deportivos para uso diario', 'Calzado', 950.00, 8, TRUE),
+('Sandalias', 'Sandalias casuales', 'Calzado', 250.00, 15, TRUE),
+('Cafe', 'Cafe molido de 500 gramos', 'Alimentos', 130.00, 30, TRUE),
+('Galletas', 'Paquete de galletas', 'Alimentos', 35.00, 40, TRUE),
+('Chocolate', 'Barra de chocolate con leche', 'Alimentos', 28.00, 50, TRUE),
+('Balon', 'Balon de futbol tamaño 5', 'Deportes', 380.00, 9, TRUE),
+('Mancuernas', 'Par de mancuernas de 5 kg', 'Deportes', 750.00, 4, TRUE);

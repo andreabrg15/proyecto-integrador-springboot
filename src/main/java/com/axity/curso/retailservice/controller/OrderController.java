@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
+
 
 @RestController
 @RequestMapping("/api/orders")
@@ -25,6 +29,19 @@ public class OrderController {
         this.orderService = orderService;
     }
 
+    private OrderResponseDTO.OrderItemResponseDTO toItemResponseDTO(
+            OrderItem item) {
+
+        return new OrderResponseDTO.OrderItemResponseDTO(
+                item.getProduct().getId(),
+                item.getProduct().getName(),
+                item.getQuantity(),
+                item.getUnitPrice(),
+                item.getSubtotal()
+        );
+    }
+
+    // Agregar pedido
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public OrderResponseDTO createOrder(
@@ -46,15 +63,47 @@ public class OrderController {
         );
     }
 
-    private OrderResponseDTO.OrderItemResponseDTO toItemResponseDTO(
-            OrderItem item) {
+    // Todos los pedidos
+    @GetMapping
+    public List<OrderResponseDTO> getAllOrders() {
+        return orderService.getAllOrders()
+            .stream()
+            .map(order -> {
+                List<OrderResponseDTO.OrderItemResponseDTO> items =
+                    order.getItems().stream()
+                    .map(this::toItemResponseDTO)
+                    .toList();
 
-        return new OrderResponseDTO.OrderItemResponseDTO(
-                item.getProduct().getId(),
-                item.getProduct().getName(),
-                item.getQuantity(),
-                item.getUnitPrice(),
-                item.getSubtotal()
+                return new OrderResponseDTO(
+                    order.getId(),
+                    order.getOrderDate(),
+                    order.getStatus(),
+                    order.getTotal(),
+                    items
+                );
+            })
+            .toList();
+    }
+    
+
+    // Pedido por id
+    @GetMapping("/{id}")
+    public OrderResponseDTO getOrderById(@PathVariable Long id) {
+
+        Order order = orderService.getOrderById(id);
+
+        List<OrderResponseDTO.OrderItemResponseDTO> items =
+                order.getItems().stream()
+                        .map(this::toItemResponseDTO)
+                        .toList();
+
+        return new OrderResponseDTO(
+            order.getId(),
+            order.getOrderDate(),
+            order.getStatus(),
+            order.getTotal(),
+            items
         );
     }
+    
 }
