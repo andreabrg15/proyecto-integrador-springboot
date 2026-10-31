@@ -1,5 +1,7 @@
 package com.axity.curso.retailservice.service;
 
+import com.axity.curso.retailservice.exception.PrecioInvalidoException;
+import com.axity.curso.retailservice.exception.RecursoNoEncontradoException;
 import com.axity.curso.retailservice.model.Product;
 import com.axity.curso.retailservice.repository.ProductRepository;
 import org.springframework.stereotype.Service;
@@ -36,7 +38,7 @@ public class ProductService {
 
         return productRepository.findByIdAndIsActiveTrue(id)
             .orElseThrow(() ->
-                    new RuntimeException(
+                    new RecursoNoEncontradoException(
                             "Producto no encontrado o inactivo con ID: " + id
                     )
             );
@@ -128,9 +130,9 @@ public class ProductService {
         }
 
         if (product.getPrice() == null ||
-                product.getPrice().compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException(
-                    "El precio no puede ser negativo ni nulo"
+                product.getPrice().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new PrecioInvalidoException(
+                    "El precio debe ser mayor que cero"
             );
         }
 

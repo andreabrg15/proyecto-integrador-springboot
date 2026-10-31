@@ -5,6 +5,8 @@ import com.axity.curso.retailservice.dto.OrderRequestDTO;
 import com.axity.curso.retailservice.model.Order;
 import com.axity.curso.retailservice.model.OrderItem;
 import com.axity.curso.retailservice.enumeration.OrderStatus;
+import com.axity.curso.retailservice.exception.RecursoNoEncontradoException;
+import com.axity.curso.retailservice.exception.StockInsuficienteException;
 import com.axity.curso.retailservice.model.Product;
 import com.axity.curso.retailservice.repository.OrderRepository;
 import com.axity.curso.retailservice.repository.ProductRepository;
@@ -70,11 +72,11 @@ public class OrderService {
 
             Product product = productRepository
                     .findById(itemRequest.productId())
-                    .orElseThrow(() -> new IllegalArgumentException(
+                    .orElseThrow(() -> new RecursoNoEncontradoException(
                             "No existe el producto solicitado"));
 
             if (!Boolean.TRUE.equals(product.getIsActive())) {
-                throw new IllegalArgumentException(
+                throw new RecursoNoEncontradoException(
                         "El producto no está disponible");
             }
 
@@ -82,7 +84,7 @@ public class OrderService {
 
             if (product.getStock() == null
                     || product.getStock() < quantity) {
-                throw new IllegalArgumentException(
+                throw new StockInsuficienteException(
                         "Stock insuficiente para: "
                                 + product.getName());
             }
@@ -117,7 +119,7 @@ public class OrderService {
     public Order getOrderById(Long id) {
         return orderRepository.findById(id)
         .orElseThrow(() ->
-                new RuntimeException(
+                new RecursoNoEncontradoException(
                         "Pedido no encontrado con ID:" + id
                 )
         );
@@ -137,7 +139,7 @@ public class OrderService {
         }
 
         Order order = orderRepository.findById(id)
-        .orElseThrow(() -> new IllegalArgumentException(
+        .orElseThrow(() -> new RecursoNoEncontradoException(
                 "No existe el pedido solicitado"));
 
         OrderStatus currentStatus = order.getStatus();
@@ -162,7 +164,7 @@ public class OrderService {
     public Order cancelOrder(Long id) {
         
         Order order = orderRepository.findById(id)
-        .orElseThrow(() -> new IllegalArgumentException(
+        .orElseThrow(() -> new RecursoNoEncontradoException(
         "No existe el pedido solicitado"));
         
         // Valida que pueda cancelarse
