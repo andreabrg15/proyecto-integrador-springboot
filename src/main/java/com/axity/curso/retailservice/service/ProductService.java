@@ -23,7 +23,7 @@ public class ProductService {
     @Transactional
     public Product createProduct(Product product) {
 
-        validateProduct(product);
+        validateProduct(product, false);
 
         product.setIsActive(true);
 
@@ -89,13 +89,11 @@ public class ProductService {
 
         Product existingProduct = getProductById(id);
 
-        validateProduct(updatedProduct);
+        validateProduct(updatedProduct, true);
 
-        existingProduct.setName(updatedProduct.getName());
         existingProduct.setDescription(updatedProduct.getDescription());
         existingProduct.setPrice(updatedProduct.getPrice());
         existingProduct.setStock(updatedProduct.getStock());
-        existingProduct.setCategory(updatedProduct.getCategory());
 
         return productRepository.save(existingProduct);
     }
@@ -111,13 +109,22 @@ public class ProductService {
         productRepository.save(product);
     }
 
-    private void validateProduct(Product product) {
+    private void validateProduct(Product product, boolean isUpdate) {
 
-        if (product.getName() == null ||
-                product.getName().isBlank()) {
-            throw new IllegalArgumentException(
-                    "El nombre del producto es obligatorio"
-            );
+        if (!isUpdate) {
+            if (product.getName() == null ||
+                    product.getName().isBlank()) {
+                throw new IllegalArgumentException(
+                        "El nombre del producto es obligatorio"
+                );
+            }
+
+            if (product.getCategory() == null ||
+                    product.getCategory().isBlank()) {
+                throw new IllegalArgumentException(
+                        "La categoría es obligatoria"
+                );
+            }
         }
 
         if (product.getPrice() == null ||
@@ -130,13 +137,6 @@ public class ProductService {
         if (product.getStock() == null || product.getStock() < 0) {
             throw new IllegalArgumentException(
                     "El stock no puede ser negativo ni nulo"
-            );
-        }
-
-        if (product.getCategory() == null ||
-                product.getCategory().isBlank()) {
-            throw new IllegalArgumentException(
-                    "La categoría es obligatoria"
             );
         }
     }

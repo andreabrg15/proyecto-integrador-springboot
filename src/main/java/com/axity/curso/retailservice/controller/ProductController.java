@@ -2,6 +2,7 @@ package com.axity.curso.retailservice.controller;
 
 import com.axity.curso.retailservice.dto.ProductRequestDTO;
 import com.axity.curso.retailservice.dto.ProductResponseDTO;
+import com.axity.curso.retailservice.dto.ProductUpdateDTO;
 import com.axity.curso.retailservice.model.Product;
 import com.axity.curso.retailservice.service.ProductService;
 
@@ -83,17 +84,15 @@ public class ProductController {
         return toProductResponseDTO(createdProduct);
     }
 
-    // Modificar Producto
+    // Modificar Producto (Ajustar descripcion, cambiar precio y/o stock)
     @PutMapping("/{id}")
     public ProductResponseDTO updateProduct(
             @PathVariable Long id,
-            @RequestBody ProductRequestDTO request) {
+            @RequestBody ProductUpdateDTO request) {
 
         Product updatedProduct = new Product();
 
-        updatedProduct.setName(request.name());
         updatedProduct.setDescription(request.description());
-        updatedProduct.setCategory(request.category());
         updatedProduct.setPrice(request.price());
         updatedProduct.setStock(request.stock());
 
