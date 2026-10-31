@@ -1,0 +1,24 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: retail-order-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: retail-order-service
+  template:
+    metadata:
+      labels:
+        app: retail-order-service
+    spec:
+      containers:
+        - name: retail-order-container
+          image: retail-order-service:1.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8282
+          envFrom:
+            - configMapRef:
+                name: retail-order-config
