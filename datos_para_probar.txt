@@ -1,7 +1,4 @@
 
-Para comenzar probar los endpoints en Swagger se inicializo la
-tabla de Products con datos usando el sig. comando en la consola de h2:
-
 INSERT INTO products (name, description, category, price, stock, is_active) VALUES
 ('Cargador', 'Cargador generico', 'Electronicos', 100.00, 10, TRUE),
 ('Audifonos', 'Audifonos alambricos', 'Electronicos', 150.00, 20, TRUE),
