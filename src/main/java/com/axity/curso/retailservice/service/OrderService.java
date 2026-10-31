@@ -5,12 +5,15 @@ import com.axity.curso.retailservice.dto.OrderRequestDTO;
 import com.axity.curso.retailservice.model.Order;
 import com.axity.curso.retailservice.model.OrderItem;
 import com.axity.curso.retailservice.enumeration.OrderStatus;
+import com.axity.curso.retailservice.event.OrderCreatedEvent;
+import com.axity.curso.retailservice.event.StockChangedEvent;
 import com.axity.curso.retailservice.exception.RecursoNoEncontradoException;
 import com.axity.curso.retailservice.exception.StockInsuficienteException;
 import com.axity.curso.retailservice.model.Product;
 import com.axity.curso.retailservice.repository.OrderRepository;
 import com.axity.curso.retailservice.repository.ProductRepository;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,13 +27,16 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     public OrderService(
             OrderRepository orderRepository,
-            ProductRepository productRepository) {
+            ProductRepository productRepository,
+            ApplicationEventPublisher eventPublisher) {
 
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     // Despues de cada transaccion que afecte los registros, se guarda con save
@@ -105,13 +111,32 @@ public class OrderService {
             total = total.add(subtotal);
 
             // Descontar el inventario
-            product.setStock(product.getStock() - quantity);
+            Integer previousStock = product.getStock();
+            Integer newStock = previousStock - quantity;
+            
+            product.setStock(newStock);
+            // Notifica que el stock cambió
+            eventPublisher.publishEvent(
+                new StockChangedEvent(
+                        product.getId(),
+                        product.getName(),
+                        previousStock,
+                        newStock
+                )
+            );
         }
 
         order.setItems(orderItems);
         order.setTotal(total);
 
-        return orderRepository.save(order);
+        Order savedOrder = orderRepository.save(order);
+
+        // Notifica que el pedido se creó
+        eventPublisher.publishEvent(
+        new OrderCreatedEvent(savedOrder.getId(), savedOrder.getTotal())
+        );
+
+        return savedOrder;
     }
 
     // Transaccion para consulta
