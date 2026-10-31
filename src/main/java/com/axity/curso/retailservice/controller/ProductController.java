@@ -6,9 +6,11 @@ import com.axity.curso.retailservice.model.Product;
 import com.axity.curso.retailservice.service.ProductService;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -44,8 +46,13 @@ public class ProductController {
 
     // Todos los productos
     @GetMapping
-    public List<ProductResponseDTO> getAllProducts() {
-        return productService.getAllProducts()
+    public List<ProductResponseDTO> getProducts(
+        @RequestParam(required = false) String category,
+        @RequestParam (required = false) BigDecimal minPrice,
+        @RequestParam (required = false) BigDecimal maxPrice
+    ) 
+    {
+        return productService.getProducts(category, minPrice, maxPrice)
                 .stream()
                 .map(this::toProductResponseDTO)
                 .toList();
@@ -55,17 +62,6 @@ public class ProductController {
     @GetMapping("/{id}")
     public ProductResponseDTO getProduct(@PathVariable Long id) {
         return toProductResponseDTO(productService.getProductById(id));
-    }
-
-    // Todos los productos por categoria
-    @GetMapping("/category/{category}")
-    public List<ProductResponseDTO> getProductsByCategory(
-            @PathVariable String category) {
-
-        return productService.getProductsByCategory(category)
-                .stream()
-                .map(this::toProductResponseDTO)
-                .toList();
     }
 
     // Agregar Producto

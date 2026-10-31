@@ -42,9 +42,45 @@ public class ProductService {
             );
     }
 
-    // Transaccion para consulta
+    // Transaccion para consulta con opcion de filtros
     @Transactional(readOnly = true)
-    public List<Product> getAllProducts() {
+    public List<Product> getProducts(
+        String category,
+        BigDecimal minPrice,
+        BigDecimal maxPrice 
+    ) 
+    {
+        if (category != null && minPrice != null && maxPrice != null) {
+            return productRepository
+            .findByCategoryIgnoreCaseAndPriceBetweenAndIsActiveTrue(category, minPrice, maxPrice);
+        }
+
+        if (category != null && minPrice != null) {
+            return productRepository
+            .findByCategoryIgnoreCaseAndPriceGreaterThanEqualAndIsActiveTrue(category, minPrice);
+        }
+
+        if (category != null && maxPrice != null) {
+            return productRepository
+            .findByCategoryIgnoreCaseAndPriceLessThanEqualAndIsActiveTrue(category, maxPrice);
+        }
+
+        if (category != null) {
+            return productRepository.findByCategoryIgnoreCaseAndIsActiveTrue(category);
+        }
+
+        if (minPrice != null && maxPrice != null) {
+            return productRepository.findByPriceBetweenAndIsActiveTrue(minPrice, maxPrice);
+        }
+
+        if (minPrice != null) {
+            return productRepository.findByPriceGreaterThanEqualAndIsActiveTrue(minPrice);
+        }
+
+        if (maxPrice != null) {
+            return productRepository.findByPriceLessThanEqualAndIsActiveTrue(maxPrice);
+        }
+
         return productRepository.findByIsActiveTrue();
     }
 
@@ -73,15 +109,6 @@ public class ProductService {
         product.setIsActive(false);
 
         productRepository.save(product);
-    }
-
-    @Transactional(readOnly = true)
-    public List<Product> getProductsByCategory(String category) {
-
-        return productRepository.findByCategoryIgnoreCase(category)
-                .stream()
-                .filter(Product::getIsActive)
-                .toList();
     }
 
     private void validateProduct(Product product) {

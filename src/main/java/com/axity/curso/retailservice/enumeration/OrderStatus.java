@@ -1,7 +1,7 @@
 package com.axity.curso.retailservice.enumeration;
 
 public enum OrderStatus {
-    PENDING,
-    DELIVERED,
-    CANCELLED
+    PROCESSING, //EN PROCESO
+    SHIPPED,    //ENVIADO
+    CANCELLED   //CANCELADO
 }

@@ -48,7 +48,7 @@ public class OrderService {
 
         Order order = new Order();
         order.setOrderDate(LocalDateTime.now());
-        order.setStatus(OrderStatus.PENDING);
+        order.setStatus(OrderStatus.PROCESSING);
 
         List<OrderItem> orderItems = new ArrayList<>();
         BigDecimal total = BigDecimal.ZERO;
@@ -126,5 +126,64 @@ public class OrderService {
     @Transactional(readOnly = true)
     public List<Order> getAllOrders() {
         return orderRepository.findAll();
+    }
+
+    @Transactional
+    public Order updateOrderStatus(Long id, OrderStatus newStatus) {
+
+        if (newStatus == null) {
+        throw new IllegalArgumentException(
+                "El estado del pedido es obligatorio");
+        }
+
+        Order order = orderRepository.findById(id)
+        .orElseThrow(() -> new IllegalArgumentException(
+                "No existe el pedido solicitado"));
+
+        OrderStatus currentStatus = order.getStatus();
+
+        boolean validTransition =
+        (currentStatus == OrderStatus.PROCESSING
+                && (newStatus == OrderStatus.SHIPPED
+                || newStatus == OrderStatus.CANCELLED));
+
+        if (!validTransition) {
+        throw new IllegalArgumentException(
+                "No se permite cambiar el pedido de "
+                        + currentStatus + " a " + newStatus);
+        }
+
+        order.setStatus(newStatus);
+
+        return orderRepository.save(order);
+    }
+    
+    @Transactional
+    public Order cancelOrder(Long id) {
+        
+        Order order = orderRepository.findById(id)
+        .orElseThrow(() -> new IllegalArgumentException(
+        "No existe el pedido solicitado"));
+        
+        // Valida que pueda cancelarse
+        if (order.getStatus() != OrderStatus.PROCESSING) {
+                throw new IllegalArgumentException(
+                "Solo se pueden cancelar pedidos en proceso");
+        }
+        
+        for (OrderItem item : order.getItems()) {
+                
+        Product product = item.getProduct();
+        
+        // Devolver las unidades al inventario
+        product.setStock(
+        product.getStock() + item.getQuantity()
+        );
+
+        }
+        
+        order.setStatus(OrderStatus.CANCELLED);
+        
+        return orderRepository.save(order);
     }
 }
